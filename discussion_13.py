@@ -67,31 +67,29 @@ def problematic_salary(cur, conn):
 def visualization_salary_data(cur, conn):
     title_sal_list = []
     d = {}
-    cur.execute('SELECT Jobs.job_title, Employees.salary FROM Employees JOIN\
-                Jobs ON Jobs.job_id = Employees.job_id')
+    d_min_max = {}
+    cur.execute('SELECT Jobs.job_title, Employees.salary, Jobs.min_salary, Jobs.max_salary FROM Employees\
+                JOIN Jobs ON Jobs.job_id = Employees.job_id')
     for row in cur:
         title_sal_list.append(row)
     for tup in title_sal_list:
         d[tup[0]] = d.get(tup[0], []) + [tup[1]]  # if not exist, return an empty list
-    
-    # sal_list = 
-    # cur.execute('SELECT Jobs.job_title, Jobs.min_salary, Jobs.max_salary \
-    #         FROM Employees JOIN Jobs ON Jobs.job_id = Employees.job_id')
-    # for row in cur:
-    #     title_sal_list.append(row)
-    
+        d_min_max[tup[0]] = [tup[2]]
+        d_min_max[tup[0]].append(tup[3])
+
     plt.figure()
-    # title_list = []
-    # sa
+    plt.xticks(rotation=45)
     for title in d:
         for sal in d[title]:
             plt.scatter(title, sal)
-            # plt.scatter(title, min_salary, color='red', marker='x')
-    
-    
+        
+    for title in d_min_max:
+        plt.scatter(title, d_min_max[title][0], color='red', marker='x')
+        plt.scatter(title, d_min_max[title][1], color='red', marker='x')
     
     plt.suptitle("Title-Salary")
     plt.show()
+
 
 class TestDiscussion12(unittest.TestCase):
     def setUp(self) -> None:
@@ -127,5 +125,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # unittest.main(verbosity=2)
-
+    unittest.main(verbosity=2)
